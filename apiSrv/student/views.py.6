@@ -1,0 +1,42 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from student.models import * 
+
+import json
+
+# Create your views here.
+
+def toJSON(objs, status=200):
+    j = json.dumps(objs, ensure_ascii=False)
+    return HttpResponse(j, status=status, content_type='application/json; charset=utf-8')
+
+
+def student_view(request) :
+	
+    if request.method == 'GET' :
+        sts = Student.objects.all()
+
+        rst = {}
+
+        data = []
+        st_info = {}
+        st_info['name'] = sts[0].name
+        st_info['age'] = sts[0].age
+        data.append(st_info)
+
+        rst['data'] = data
+        rst['total'] = 1
+
+    return toJSON(rst, 200)
+
+def student_detail_view(request, id) :
+
+    param_age = id	
+    sts = Student.objects.get(age=param_age)
+
+    rst = {}
+    rst['name'] = sts.name
+    rst['age'] = sts.age
+
+
+    return toJSON(rst, 200)
